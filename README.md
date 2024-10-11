@@ -5,6 +5,7 @@ The tiniest possible mockup of our system
 ## Notes
 
 ## Change Log
+- Add trace info for plotting with `addTraceInfo`
 - Add test for `processData` with mock simulation data
 - Move data processing to `processData` in `dataUtils.js`
 - Increase heap size to prevent browser shut down

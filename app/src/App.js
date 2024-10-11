@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { processData } from './dataUtils';
+import { addTraceInfo, processData } from './dataUtils';
 
 const App = () => {
   // Store plot data in state.
@@ -17,7 +17,8 @@ const App = () => {
         const response = await fetch('data.json');
         const data = await response.json();
         // Process data into format for plotting
-        const updatedPlotData = processData(data);
+        const processed = processData(data);
+        const updatedPlotData = addTraceInfo(processed);
         setPlotData(Object.values(updatedPlotData));
         console.log('plotData:', Object.values(updatedPlotData));
       } catch (error) {
@@ -34,7 +35,7 @@ const App = () => {
       data={plotData}
       layout={{
         title: 'Orbit Simulation',
-        yaxis: { scaleanchor: 'x' },
+        // yaxis: { scaleanchor: 'x' },
         autosize: true,
       }}
     />

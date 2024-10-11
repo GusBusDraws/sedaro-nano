@@ -1,4 +1,3 @@
-// Separate data processing
 export function processData(data) {
   const updatedPlotData = {};
   data.forEach(([t0, t1, frame]) => {
@@ -9,4 +8,17 @@ export function processData(data) {
     }
   });
   return updatedPlotData;
-}
+};
+
+export function addTraceInfo(processed) {
+  const traces = {};
+  for (let [agentId, { x, y }] of Object.entries(processed)) {
+    traces[agentId] = {
+      x: x,
+      y: y,
+      name: agentId,
+      // type: 'scatter3d'
+    }
+  };
+  return traces
+};
