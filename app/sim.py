@@ -77,7 +77,7 @@ class QRangeStore:
     IndexError: Not found.
     """
     def __init__(self): self.store = []
-    def __setitem__(self, rng, value): 
+    def __setitem__(self, rng, value):
         (low, high) = rng
         if not low < high: raise IndexError("Invalid Range.")
         self.store.append((low, high, value))
