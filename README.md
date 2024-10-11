@@ -5,6 +5,7 @@ The tiniest possible mockup of our system
 ## Notes
 
 ## Change Log
+- Move data processing to `processData` in `dataUtils.js`
 - Increase heap size to prevent browser shut down
 
 ## Goal
