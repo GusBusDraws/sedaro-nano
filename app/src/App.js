@@ -35,8 +35,16 @@ const App = () => {
       data={plotData}
       layout={{
         title: 'Orbit Simulation',
+        scene: {
+          xaxis: { title: 'x' },
+          yaxis: { title: 'y' },
+          zaxis: { title: 'time' },
+          // aspectmode: 'data',
+          aspectmode: 'cube'
+          // aspectratio: {x: 2, y: 1, z: 2}
+        },
         // yaxis: { scaleanchor: 'x' },
-        autosize: true,
+        // autosize: true,
       }}
     />
   );

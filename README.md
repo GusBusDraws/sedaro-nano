@@ -5,6 +5,7 @@ The tiniest possible mockup of our system
 ## Notes
 
 ## Change Log
+- Plot time as third dimension
 - Add trace info for plotting with `addTraceInfo`
 - Add test for `processData` with mock simulation data
 - Move data processing to `processData` in `dataUtils.js`
