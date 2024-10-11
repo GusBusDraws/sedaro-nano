@@ -7,14 +7,23 @@ from random import random
 # MODELING & SIMULATION
 
 init = {
-    'Planet': {'time': 0, 'timeStep': 0.01, 'x': 0, 'y': 0.1, 'vx': 0.1, 'vy': 0},
-    'Satellite': {'time': 0, 'timeStep': 0.01, 'x': 0, 'y': 1, 'vx': 1, 'vy': 0},
+    'Planet': {
+        'time': 0, 'timeStep': 0.01,
+        'x': 0, 'y': 0.1, 'vx': 0.1, 'vy': 0
+    },
+    'Satellite': {
+        'time': 0, 'timeStep': 0.01,
+        'x': 0, 'y': 1, 'vx': 1, 'vy': 0
+    },
 }
 
 def propagate(agentId, universe):
     """Propagate agentId from `time` to `time + timeStep`."""
     state = universe[agentId]
-    time, timeStep, x, y, vx, vy = state['time'], state['timeStep'], state['x'], state['y'], state['vx'], state['vy']
+    time, timeStep, x, y, vx, vy = (
+        state['time'], state['timeStep'],
+        state['x'], state['y'], state['vx'], state['vy']
+    )
 
     if agentId == 'Planet':
         x += vx * timeStep
@@ -30,7 +39,10 @@ def propagate(agentId, universe):
         x += vx * timeStep
         y += vy * timeStep
 
-    return {'time': time + timeStep, 'timeStep': 0.01+random()*0.09, 'x': x, 'y': y, 'vx': vx, 'vy': vy}
+    return {
+        'time': time + timeStep, 'timeStep': 0.01+random()*0.09,
+        'x': x, 'y': y, 'vx': vx, 'vy': vy
+    }
 
 # DATA STRUCTURE
 
@@ -70,10 +82,10 @@ class QRangeStore:
         if not low < high: raise IndexError("Invalid Range.")
         self.store.append((low, high, value))
     def __getitem__(self, key):
-        ret = [v for (l, h, v) in self.store if l <= key < h] 
+        ret = [v for (l, h, v) in self.store if l <= key < h]
         if not ret: raise IndexError("Not found.")
         return ret
-    
+
 doctest.testmod()
 
 # SIMULATOR

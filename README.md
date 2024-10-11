@@ -5,6 +5,9 @@ The tiniest possible mockup of our system
 ## Notes
 
 ## Change Log
+### add-sim-body
+- Clean `sim.py`
+### add-t-dim
 - Plot time as third dimension
 - Add trace info for plotting with `addTraceInfo`
 - Add test for `processData` with mock simulation data
