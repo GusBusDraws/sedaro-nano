@@ -10,6 +10,8 @@ The tiniest possible mockup of our system
 - Investigate timeStep increment mechanism
 
 ## Change Log
+### third-body
+- Fix bug with velocity update not accounting for time step
 ### add-sim-body
 - Add more realistic orbital mechanics in `sim.py`
 - Clean `sim.py`

@@ -9,12 +9,12 @@ from random import random
 
 init = {
     'Planet': {
-        'time': 0, 'timeStep': 0.1, 'mass': 100,
+        'time': 0, 'timeStep': 0.05, 'mass': 1E6,
         'x': 0, 'y': 0, 'vx': 0, 'vy': 0
     },
     'Satellite': {
-        'time': 0, 'timeStep': 0.1, 'mass': 1,
-        'x': 0, 'y': -10, 'vx': 10, 'vy': 0
+        'time': 0, 'timeStep': 0.05, 'mass': 10,
+        'x': 0, 'y': -100, 'vx': 100, 'vy': 0
     },
 }
 
@@ -34,24 +34,19 @@ def propagate(agentId, universe):
     """Propagate agentId from `time` to `time + timeStep`."""
     time, timeStep, mass, position, velocity = getAgentState(agentId, universe)
 
-    if agentId == 'Planet':
-        position = position + velocity * timeStep
-    elif agentId == 'Satellite':
-        theOthers = [a for a in set(universe) if a != agentId]
-        for otherId in theOthers:
-            _, _, otherMass, otherPosition, _ = getAgentState(otherId, universe)
-            distance = position - otherPosition
-            distanceMag = np.linalg.norm(distance)
-            # g = 6.67*10**(-11)
-            g = 1
-            forceMag = g * mass * otherMass / (distanceMag ** 2)
-            force = distance / np.linalg.norm(distance) * forceMag
+    theOthers = [a for a in set(universe) if a != agentId]
+    for otherId in theOthers:
+        _, _, otherMass, otherPosition, _ = getAgentState(otherId, universe)
+        distance = position - otherPosition
+        distanceMag = np.linalg.norm(distance)
+        # g = 6.67*10**(-11)
+        g = 1
+        forceMag = g * mass * otherMass / (distanceMag ** 2)
+        force = distance / np.linalg.norm(distance) * forceMag
 
-            # If not ignoring force on other bodies, this needs a loop
-            acceleration = force / mass
-            velocity = velocity - acceleration
-            # velocity = velocity - acceleration * timeStep
-        position = position + velocity * timeStep
+        acceleration = force / mass
+        velocity = velocity - (acceleration * timeStep)
+    position = position + (velocity * timeStep)
 
     return {
         'time': time + timeStep,
