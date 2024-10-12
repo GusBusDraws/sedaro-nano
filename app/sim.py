@@ -2,46 +2,64 @@ import doctest
 import json
 from functools import reduce
 from operator import __or__
+import numpy as np
 from random import random
 
 # MODELING & SIMULATION
 
 init = {
     'Planet': {
-        'time': 0, 'timeStep': 0.01,
-        'x': 0, 'y': 0.1, 'vx': 0.1, 'vy': 0
+        'time': 0, 'timeStep': 0.1, 'mass': 100,
+        'x': 0, 'y': 0, 'vx': 0, 'vy': 0
     },
     'Satellite': {
-        'time': 0, 'timeStep': 0.01,
-        'x': 0, 'y': 1, 'vx': 1, 'vy': 0
+        'time': 0, 'timeStep': 0.1, 'mass': 1,
+        'x': 0, 'y': -10, 'vx': 10, 'vy': 0
     },
 }
 
+def getAgentState(agentId, universe):
+    """Collect position and velocity for a specified agent."""
+    state = universe[agentId]
+    time, timeStep, mass, x, y, vx, vy = (
+        state['time'], state['timeStep'], state['mass'],
+        state['x'], state['y'],
+        state['vx'], state['vy']
+    )
+    position = np.asarray([x, y], float)
+    velocity = np.asarray([vx, vy], float)
+    return time, timeStep, mass, position, velocity
+
 def propagate(agentId, universe):
     """Propagate agentId from `time` to `time + timeStep`."""
-    state = universe[agentId]
-    time, timeStep, x, y, vx, vy = (
-        state['time'], state['timeStep'],
-        state['x'], state['y'], state['vx'], state['vy']
-    )
+    time, timeStep, mass, position, velocity = getAgentState(agentId, universe)
 
     if agentId == 'Planet':
-        x += vx * timeStep
-        y += vy * timeStep
+        position = position + velocity * timeStep
     elif agentId == 'Satellite':
-        px, py = universe['Planet']['x'], universe['Planet']['y']
-        dx = px - x
-        dy = py - y
-        fx = dx / (dx**2 + dy**2)**(3/2)
-        fy = dy / (dx**2 + dy**2)**(3/2)
-        vx += fx * timeStep
-        vy += fy * timeStep
-        x += vx * timeStep
-        y += vy * timeStep
+        theOthers = [a for a in set(universe) if a != agentId]
+        for otherId in theOthers:
+            _, _, otherMass, otherPosition, _ = getAgentState(otherId, universe)
+            distance = position - otherPosition
+            distanceMag = np.linalg.norm(distance)
+            # g = 6.67*10**(-11)
+            g = 1
+            forceMag = g * mass * otherMass / (distanceMag ** 2)
+            force = distance / np.linalg.norm(distance) * forceMag
+
+            # If not ignoring force on other bodies, this needs a loop
+            acceleration = force / mass
+            velocity = velocity - acceleration
+            # velocity = velocity - acceleration * timeStep
+        position = position + velocity * timeStep
 
     return {
-        'time': time + timeStep, 'timeStep': 0.01+random()*0.09,
-        'x': x, 'y': y, 'vx': vx, 'vy': vy
+        'time': time + timeStep,
+        # 'timeStep': 0.01+random()*0.09,
+        'timeStep': timeStep,
+        'mass': mass,
+        'x': position[0], 'y': position[1],
+        'vx': velocity[0], 'vy': velocity[1]
     }
 
 # DATA STRUCTURE
