@@ -8,14 +8,34 @@ from random import random
 # MODELING & SIMULATION
 
 init = {
-    'Planet': {
-        'time': 0, 'timeStep': 0.05, 'mass': 1E6,
-        'x': 0, 'y': 0, 'vx': 0, 'vy': 0
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 50, 'vy': 0
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -50, 'vy': 0
     },
     'Satellite': {
-        'time': 0, 'timeStep': 0.05, 'mass': 10,
-        'x': 0, 'y': -100, 'vx': 100, 'vy': 0
+        'time': 0, 'timeStep': 0.02, 'mass': 10,
+        'x': 0, 'y': -200, 'vx': 90, 'vy': 0
     },
+    # 'Satellite + 0.1v': {
+    #     'time': 0, 'timeStep': 0.02, 'mass': 10,
+    #     'x': 0, 'y': -200, 'vx': 110, 'vy': 0
+    # },
+    # 'Satellite - 0.1v': {
+    #     'time': 0, 'timeStep': 0.02, 'mass': 10,
+    #     'x': 0, 'y': -200, 'vx': 90, 'vy': 0
+    # },
+    # 'Planet': {
+    #     'time': 0, 'timeStep': 0.05, 'mass': 1E6,
+    #     'x': 0, 'y': 0, 'vx': 0, 'vy': 0
+    # },
+    # 'Satellite': {
+    #     'time': 0, 'timeStep': 0.05, 'mass': 10,
+    #     'x': 0, 'y': -100, 'vx': 100, 'vy': 0
+    # },
 }
 
 def getAgentState(agentId, universe):
@@ -114,7 +134,7 @@ store = QRangeStore()
 store[-999999999, 0] = init
 times = {agentId: state['time'] for agentId, state in init.items()}
 
-for _ in range(500):
+for _ in range(10**3):
     for agentId in init:
         t = times[agentId]
         universe = read(t-0.001)

@@ -5,12 +5,13 @@ The tiniest possible mockup of our system
 ## Notes
 
 ## To-Do
-- Add a third agent
+- Add visualization for sensitivity of third body ICs
 - Add animation slider
 - Investigate timeStep increment mechanism
 
 ## Change Log
 ### third-body
+- Add third body
 - Fix bug with velocity update not accounting for time step
 ### add-sim-body
 - Add more realistic orbital mechanics in `sim.py`
