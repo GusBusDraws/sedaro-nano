@@ -4,7 +4,16 @@ The tiniest possible mockup of our system
 
 ## Notes
 
+## To-Do
+- Add a third agent
+- Add animation slider
+- Investigate timeStep increment mechanism
+
 ## Change Log
+### add-sim-body
+- Add more realistic orbital mechanics in `sim.py`
+- Clean `sim.py`
+### add-t-dim
 - Plot time as third dimension
 - Add trace info for plotting with `addTraceInfo`
 - Add test for `processData` with mock simulation data
