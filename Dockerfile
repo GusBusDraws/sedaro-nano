@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y \
   libsqlite3-dev \
   wget \
   libbz2-dev \
-  python3
+  python3 \
+  python3-numpy
 
 # Run the sim in order to output a data.json file.
 # IDEA: Rearchitect this so we can run the simulation many times with different initial conditions, without rebuilding

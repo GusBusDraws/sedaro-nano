@@ -7,16 +7,61 @@ from random import random
 
 # MODELING & SIMULATION
 
-init = {
-    'Planet': {
-        'time': 0, 'timeStep': 0.1, 'mass': 100,
-        'x': 0, 'y': 0, 'vx': 0, 'vy': 0
+init0 = {
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
     },
     'Satellite': {
-        'time': 0, 'timeStep': 0.1, 'mass': 1,
-        'x': 0, 'y': -10, 'vx': 10, 'vy': 0
-    },
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 90, 'vy': 0,
+        'variant': False
+    }
 }
+
+init1 = {
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
+    },
+    'Satellite': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 89.9999, 'vy': 0,
+        'variant': False
+    }
+}
+
+init2 = {
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
+    },
+    'Satellite': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 90.0001, 'vy': 0,
+        'variant': False
+    }
+}
+
+inits = [init0, init1, init2]
 
 def getAgentState(agentId, universe):
     """Collect position and velocity for a specified agent."""
@@ -34,24 +79,19 @@ def propagate(agentId, universe):
     """Propagate agentId from `time` to `time + timeStep`."""
     time, timeStep, mass, position, velocity = getAgentState(agentId, universe)
 
-    if agentId == 'Planet':
-        position = position + velocity * timeStep
-    elif agentId == 'Satellite':
-        theOthers = [a for a in set(universe) if a != agentId]
-        for otherId in theOthers:
-            _, _, otherMass, otherPosition, _ = getAgentState(otherId, universe)
-            distance = position - otherPosition
-            distanceMag = np.linalg.norm(distance)
-            # g = 6.67*10**(-11)
-            g = 1
-            forceMag = g * mass * otherMass / (distanceMag ** 2)
-            force = distance / np.linalg.norm(distance) * forceMag
+    theOthers = [a for a in set(universe) if a != agentId]
+    for otherId in theOthers:
+        _, _, otherMass, otherPosition, _ = getAgentState(otherId, universe)
+        distance = position - otherPosition
+        distanceMag = np.linalg.norm(distance)
+        # g = 6.67*10**(-11)
+        g = 1
+        forceMag = g * mass * otherMass / (distanceMag ** 2)
+        force = distance / np.linalg.norm(distance) * forceMag
 
-            # If not ignoring force on other bodies, this needs a loop
-            acceleration = force / mass
-            velocity = velocity - acceleration
-            # velocity = velocity - acceleration * timeStep
-        position = position + velocity * timeStep
+        acceleration = force / mass
+        velocity = velocity - (acceleration * timeStep)
+    position = position + (velocity * timeStep)
 
     return {
         'time': time + timeStep,
@@ -115,18 +155,20 @@ def read(t):
         data = []
     return reduce(__or__, data, {})
 
-store = QRangeStore()
-store[-999999999, 0] = init
-times = {agentId: state['time'] for agentId, state in init.items()}
 
-for _ in range(500):
-    for agentId in init:
-        t = times[agentId]
-        universe = read(t-0.001)
-        if set(universe) == set(init):
-            newState = propagate(agentId, universe)
-            store[t, newState['time']] = {agentId: newState}
-            times[agentId] = newState['time']
+for i, init in enumerate(inits):
+    store = QRangeStore()
+    store[-999999999, 0] = init
+    times = {agentId: state['time'] for agentId, state in init.items()}
 
-with open('./public/data.json', 'w') as f:
-    f.write(json.dumps(store.store, indent=4))
+    for _ in range(10**3):
+        for agentId in init:
+            t = times[agentId]
+            universe = read(t-0.001)
+            if set(universe) == set(init):
+                newState = propagate(agentId, universe)
+                store[t, newState['time']] = {agentId: newState}
+                times[agentId] = newState['time']
+
+    with open(f'./public/data{i}.json', 'w') as f:
+        f.write(json.dumps(store.store, indent=4))
