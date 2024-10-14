@@ -11,6 +11,7 @@ The tiniest possible mockup of our system
 
 ## Change Log
 ### third-body
+- Add numpy requirement to Dockerfile
 - Add third body
 - Fix bug with velocity update not accounting for time step
 ### add-sim-body
