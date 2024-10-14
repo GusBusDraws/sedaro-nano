@@ -7,36 +7,61 @@ from random import random
 
 # MODELING & SIMULATION
 
-init = {
+init0 = {
     'Planet-1': {
         'time': 0, 'timeStep': 0.02, 'mass': 1E6,
-        'x': 0, 'y': 50, 'vx': 50, 'vy': 0
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
     },
     'Planet-2': {
         'time': 0, 'timeStep': 0.02, 'mass': 2E6,
-        'x': 0, 'y': -50, 'vx': -50, 'vy': 0
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
     },
     'Satellite': {
-        'time': 0, 'timeStep': 0.02, 'mass': 10,
-        'x': 0, 'y': -200, 'vx': 90, 'vy': 0
-    },
-    # 'Satellite + 0.1v': {
-    #     'time': 0, 'timeStep': 0.02, 'mass': 10,
-    #     'x': 0, 'y': -200, 'vx': 110, 'vy': 0
-    # },
-    # 'Satellite - 0.1v': {
-    #     'time': 0, 'timeStep': 0.02, 'mass': 10,
-    #     'x': 0, 'y': -200, 'vx': 90, 'vy': 0
-    # },
-    # 'Planet': {
-    #     'time': 0, 'timeStep': 0.05, 'mass': 1E6,
-    #     'x': 0, 'y': 0, 'vx': 0, 'vy': 0
-    # },
-    # 'Satellite': {
-    #     'time': 0, 'timeStep': 0.05, 'mass': 10,
-    #     'x': 0, 'y': -100, 'vx': 100, 'vy': 0
-    # },
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 90, 'vy': 0,
+        'variant': False
+    }
 }
+
+init1 = {
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
+    },
+    'Satellite': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 89.9999, 'vy': 0,
+        'variant': False
+    }
+}
+
+init2 = {
+    'Planet-1': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E6,
+        'x': 0, 'y': 50, 'vx': 40, 'vy': 0,
+        'variant': False
+    },
+    'Planet-2': {
+        'time': 0, 'timeStep': 0.02, 'mass': 2E6,
+        'x': 0, 'y': -50, 'vx': -40, 'vy': 0,
+        'variant': False
+    },
+    'Satellite': {
+        'time': 0, 'timeStep': 0.02, 'mass': 1E5,
+        'x': 0, 'y': -200, 'vx': 90.0001, 'vy': 0,
+        'variant': False
+    }
+}
+
+inits = [init0, init1, init2]
 
 def getAgentState(agentId, universe):
     """Collect position and velocity for a specified agent."""
@@ -130,18 +155,20 @@ def read(t):
         data = []
     return reduce(__or__, data, {})
 
-store = QRangeStore()
-store[-999999999, 0] = init
-times = {agentId: state['time'] for agentId, state in init.items()}
 
-for _ in range(10**3):
-    for agentId in init:
-        t = times[agentId]
-        universe = read(t-0.001)
-        if set(universe) == set(init):
-            newState = propagate(agentId, universe)
-            store[t, newState['time']] = {agentId: newState}
-            times[agentId] = newState['time']
+for i, init in enumerate(inits):
+    store = QRangeStore()
+    store[-999999999, 0] = init
+    times = {agentId: state['time'] for agentId, state in init.items()}
 
-with open('./public/data.json', 'w') as f:
-    f.write(json.dumps(store.store, indent=4))
+    for _ in range(10**3):
+        for agentId in init:
+            t = times[agentId]
+            universe = read(t-0.001)
+            if set(universe) == set(init):
+                newState = propagate(agentId, universe)
+                store[t, newState['time']] = {agentId: newState}
+                times[agentId] = newState['time']
+
+    with open(f'./public/data{i}.json', 'w') as f:
+        f.write(json.dumps(store.store, indent=4))
