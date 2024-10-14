@@ -11,6 +11,7 @@ The tiniest possible mockup of our system
 
 ## Change Log
 ### third-body
+- Try to add a drop down menu to choose the simulation to plot
 - Add multiple simulation runs to show sensitivity
 - Add numpy requirement to Dockerfile
 - Add third body

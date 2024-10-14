@@ -24,6 +24,22 @@
   color: white;
 }
 
+.app {
+  overflow: visible;
+  display: flex;
+  flex-direction: row;
+}
+
+.menu {
+  width: 500px;
+  background-color: red;
+}
+
+.plot {
+  width: 500px;
+  background-color: blue;
+}
+
 .App-link {
   color: #61dafb;
 }
